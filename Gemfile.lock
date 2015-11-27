@@ -11,6 +11,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.8)
+    coderay (1.1.0)
     concurrent-ruby (1.0.0)
     connection_pool (2.2.0)
     dotenv (2.0.2)
@@ -18,9 +19,14 @@ GEM
       multipart-post (>= 1.2, < 3)
     git (1.2.9.1)
     json (1.8.3)
+    method_source (0.8.2)
     multipart-post (2.0.0)
     octokit (4.2.0)
       sawyer (~> 0.6.0, >= 0.5.3)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     puma (2.15.3)
     rack (1.6.4)
     redis (3.2.2)
@@ -32,6 +38,7 @@ GEM
       connection_pool (~> 2.2, >= 2.2.0)
       json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
+    slop (3.6.0)
     thor (0.19.1)
     webhook_handler (0.4.0)
       rack (>= 1, < 2)
@@ -44,6 +51,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   everypoliticianbot!
+  pry
   puma
   webhook_handler (~> 0.4.0)
 
