@@ -27,7 +27,7 @@ class CountriesJsonUpdater
   def perform(branch)
     message = 'Refresh countries.json'
     options = { branch: branch, message: message }
-    with_git_repo(everypolitician_data_repo, options) do
+    with_git_repo(EVERYPOLITICIAN_DATA_REPO, options) do
       # Unset bundler environment variables so it uses the correct Gemfile etc.
       env = {
         'BUNDLE_GEMFILE' => nil,
