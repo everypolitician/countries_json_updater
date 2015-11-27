@@ -1,4 +1,4 @@
-# CountriesJsonUpdater
+# CountriesJsonUpdater [![Build Status](https://travis-ci.org/everypolitician/countries_json_updater.svg?branch=master)](https://travis-ci.org/everypolitician/countries_json_updater)
 
 A webhook handler for updating the [`countries.json` file](https://github.com/everypolitician/everypolitician-data/blob/master/countries.json) file in the everypolitician-data repo when there's a new or updated pull request.
 
