@@ -14,12 +14,14 @@ GEM
     coderay (1.1.0)
     concurrent-ruby (1.0.0)
     connection_pool (2.2.0)
+    docile (1.1.5)
     dotenv (2.0.2)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     git (1.2.9.1)
     json (1.8.3)
     method_source (0.8.2)
+    minitest (5.8.3)
     multipart-post (2.0.0)
     octokit (4.2.0)
       sawyer (~> 0.6.0, >= 0.5.3)
@@ -29,6 +31,9 @@ GEM
       slop (~> 3.4)
     puma (2.15.3)
     rack (1.6.4)
+    rack-test (0.6.3)
+      rack (>= 1.0)
+    rake (10.4.2)
     redis (3.2.2)
     sawyer (0.6.0)
       addressable (~> 2.3.5)
@@ -38,6 +43,11 @@ GEM
       connection_pool (~> 2.2, >= 2.2.0)
       json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
+    simplecov (0.10.0)
+      docile (~> 1.1.0)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
     slop (3.6.0)
     thor (0.19.1)
     webhook_handler (0.4.0)
@@ -51,8 +61,12 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   everypoliticianbot!
+  minitest
   pry
   puma
+  rack-test
+  rake
+  simplecov
   webhook_handler (~> 0.4.0)
 
 BUNDLED WITH
