@@ -12,6 +12,10 @@ require_relative '../app'
 describe CountriesJsonUpdater do
   include Rack::Test::Methods
 
+  before do
+    CountriesJsonUpdater.everypolitician_data_repo = 'everypolitician/everypolitician-data'
+  end
+
   def after_teardown
     Sidekiq::Worker.clear_all
   end

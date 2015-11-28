@@ -1,5 +1,4 @@
 require 'json'
-
 require 'webhook_handler'
 require 'everypoliticianbot'
 require 'dotenv'
@@ -9,16 +8,20 @@ class CountriesJsonUpdater
   include WebhookHandler
   include Everypoliticianbot::Github
 
-  begin
-    EVERYPOLITICIAN_DATA_REPO = ENV.fetch('EVERYPOLITICIAN_DATA_REPO')
+  def self.everypolitician_data_repo
+    @everypolitician_data_repo ||= ENV.fetch('EVERYPOLITICIAN_DATA_REPO')
   rescue KeyError => e
     abort "Missing required environment variable: #{e}"
+  end
+
+  def self.everypolitician_data_repo=(repo)
+    @everypolitician_data_repo = repo
   end
 
   def handle_webhook
     request.body.rewind
     payload = JSON.parse(request.body.read)
-    return unless payload['repository']['full_name'] == EVERYPOLITICIAN_DATA_REPO
+    return unless payload['repository']['full_name'] == self.class.everypolitician_data_repo
     return unless %w(opened synchronize).include?(payload['action'])
     branch = payload['pull_request']['head']['ref']
     self.class.perform_async(branch)
@@ -27,7 +30,7 @@ class CountriesJsonUpdater
   def perform(branch)
     message = 'Refresh countries.json'
     options = { branch: branch, message: message }
-    with_git_repo(EVERYPOLITICIAN_DATA_REPO, options) do
+    with_git_repo(self.class.everypolitician_data_repo, options) do
       # Unset bundler environment variables so it uses the correct Gemfile etc.
       env = {
         'BUNDLE_GEMFILE' => nil,
