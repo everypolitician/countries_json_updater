@@ -28,7 +28,7 @@ describe CountriesJsonUpdater do
     @payload ||= File.read(File.expand_path('../example_payload.json', __FILE__))
   end
 
-  describe 'handling a webhook' do
+  describe 'receiving a webhook' do
     it 'queues up 1 job' do
       post '/', payload, 'CONTENT_TYPE' => 'application/json'
       app.jobs.size.must_equal(1)
@@ -51,6 +51,38 @@ describe CountriesJsonUpdater do
       payload2['action'] = 'closed'
       post '/', JSON.generate(payload2), 'CONTENT_TYPE' => 'application/json'
       app.jobs.size.must_equal(0)
+    end
+  end
+
+  describe 'processing a webhook' do
+    subject { CountriesJsonUpdater.new }
+    let(:with_git_repo) { Minitest::Mock.new }
+    let(:system) { Minitest::Mock.new }
+
+    before do
+      with_git_repo.expect(
+        :call,
+        nil,
+        [
+          subject.class.everypolitician_data_repo,
+          { branch: 'asdf', message: 'Refresh countries.json' }
+        ]
+      )
+      system.expect(:call, nil, [Hash, 'bundle install'])
+      system.expect(:call, nil, [Hash, 'bundle exec rake countries.json'])
+    end
+
+    after do
+      with_git_repo.verify
+      system.verify
+    end
+
+    it 'clones the repo' do
+      subject.stub(:with_git_repo, with_git_repo) do
+        subject.stub(:system, system) do
+          subject.perform('asdf')
+        end
+      end
     end
   end
 end
