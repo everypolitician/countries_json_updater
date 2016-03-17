@@ -39,7 +39,7 @@ class CountriesJsonUpdater
         'RUBYLIB' => nil,
         'NOKOGIRI_USE_SYSTEM_LIBRARIES' => '1'
       }
-      system(env, 'bundle install')
+      system(env, 'bundle install --quiet')
       system(env, 'bundle exec rake countries.json')
     end
   end
