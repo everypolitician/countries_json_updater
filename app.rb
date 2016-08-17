@@ -1,6 +1,7 @@
 require 'json'
 require 'webhook_handler'
 require 'everypoliticianbot'
+require 'sidekiq/api'
 require 'dotenv'
 Dotenv.load
 
@@ -24,6 +25,11 @@ class CountriesJsonUpdater
     return unless payload['repository']['full_name'] == self.class.everypolitician_data_repo
     return unless %w(opened synchronize).include?(payload['action'])
     branch = payload['pull_request']['head']['ref']
+    if Sidekiq::Queue.new.map(&:args).flatten.include?(branch)
+      error = "Existing job found for branch #{branch.inspect}, skipping."
+      logger.warn(error)
+      return error
+    end
     self.class.perform_async(branch)
   end
 
