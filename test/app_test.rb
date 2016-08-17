@@ -68,7 +68,7 @@ describe CountriesJsonUpdater do
           { branch: 'asdf', message: 'Refresh countries.json' }
         ]
       )
-      system.expect(:call, nil, [Hash, 'bundle install --quiet'])
+      system.expect(:call, nil, [Hash, 'bundle install --quiet --jobs 4 --without test'])
       system.expect(:call, nil, [Hash, 'bundle exec rake countries.json'])
     end
 
