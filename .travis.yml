@@ -6,3 +6,5 @@ before_install: gem install bundler -v 1.10.6
 env:
   global:
     - EVERYPOLITICIAN_DATA_REPO=everypolitician/everypolitician-data
+services:
+  - redis-server
