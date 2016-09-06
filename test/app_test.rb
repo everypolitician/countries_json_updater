@@ -4,6 +4,7 @@ SimpleCov.start if ENV['COVERAGE']
 
 require 'minitest/autorun'
 require 'rack/test'
+require 'webmock/minitest'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 
@@ -14,6 +15,8 @@ describe CountriesJsonUpdater do
 
   before do
     CountriesJsonUpdater.everypolitician_data_repo = 'everypolitician/everypolitician-data'
+    stub_request(:get, 'https://api.github.com/repos/everypolitician/everypolitician-data/pulls/16585')
+      .to_return(body: File.read('test/github_api_response.json'), headers: { 'Content-Type' => 'application/json' })
   end
 
   def after_teardown
@@ -25,31 +28,24 @@ describe CountriesJsonUpdater do
   end
 
   def payload
-    @payload ||= File.read(File.expand_path('../example_payload.json', __FILE__))
+    {
+      pull_request_url: 'https://api.github.com/repos/everypolitician/everypolitician-data/pulls/16585'
+    }.to_json
   end
 
   describe 'receiving a webhook' do
     it 'queues up 1 job' do
-      post '/', payload, 'CONTENT_TYPE' => 'application/json'
+      post '/', payload, 'CONTENT_TYPE' => 'application/json', 'HTTP_X_EVERYPOLITICIAN_EVENT' => 'pull_request_opened'
       app.jobs.size.must_equal(1)
     end
 
     it 'passes the branch name to the job' do
-      post '/', payload, 'CONTENT_TYPE' => 'application/json'
-      app.jobs.first['args'].must_equal(["turkey-assembly-1448607229"])
-    end
-
-    it 'ignores pull requests for other repositories' do
-      payload2 = JSON.parse(payload)
-      payload2['repository']['full_name'] = 'foo/bar'
-      post '/', JSON.generate(payload2), 'CONTENT_TYPE' => 'application/json'
-      app.jobs.size.must_equal(0)
+      post '/', payload, 'CONTENT_TYPE' => 'application/json', 'HTTP_X_EVERYPOLITICIAN_EVENT' => 'pull_request_opened'
+      app.jobs.first['args'].must_equal(["philippines-house-1473176512"])
     end
 
     it 'ignores pull requests which are being closed' do
-      payload2 = JSON.parse(payload)
-      payload2['action'] = 'closed'
-      post '/', JSON.generate(payload2), 'CONTENT_TYPE' => 'application/json'
+      post '/', payload, 'CONTENT_TYPE' => 'application/json', 'HTTP_X_EVERYPOLITICIAN_EVENT' => 'pull_request_closed'
       app.jobs.size.must_equal(0)
     end
   end
