@@ -17,6 +17,11 @@ describe CountriesJsonUpdater do
     CountriesJsonUpdater.everypolitician_data_repo = 'everypolitician/everypolitician-data'
     stub_request(:get, 'https://api.github.com/repos/everypolitician/everypolitician-data/pulls/16585')
       .to_return(body: File.read('test/github_api_response.json'), headers: { 'Content-Type' => 'application/json' })
+    ENV['GITHUB_ACCESS_TOKEN'] = '123abc'
+  end
+
+  after do
+    ENV.delete('GITHUB_ACCESS_TOKEN')
   end
 
   def after_teardown
