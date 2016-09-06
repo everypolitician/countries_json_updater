@@ -22,9 +22,13 @@ class CountriesJsonUpdater
   def handle_webhook
     request.body.rewind
     payload = JSON.parse(request.body.read)
-    return unless payload['repository']['full_name'] == self.class.everypolitician_data_repo
-    return unless %w(opened synchronize).include?(payload['action'])
-    branch = payload['pull_request']['head']['ref']
+    event = request.env['HTTP_X_EVERYPOLITICIAN_EVENT']
+    unless %w(pull_request_opened pull_request_synchronize).include?(event)
+      return "Unhandled event: #{event.inspect}"
+    end
+    pull_request_number = payload['pull_request_url'].split('/').last.to_i
+    pull_request = github.pull_request(self.class.everypolitician_data_repo, pull_request_number)
+    branch = pull_request.head.ref
     if Sidekiq::Queue.new.map(&:args).flatten.include?(branch)
       error = "Existing job found for branch #{branch.inspect}, skipping."
       logger.warn(error)
