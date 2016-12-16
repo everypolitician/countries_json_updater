@@ -1,14 +1,15 @@
 source 'https://rubygems.org'
 
 ruby '2.2.3'
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}.git" }
 
-gem 'webhook_handler', '~> 0.4.0'
-gem 'puma'
 gem 'dotenv'
-gem 'everypoliticianbot', git: 'https://github.com/everypolitician/everypoliticianbot', branch: 'master'
+gem 'everypoliticianbot', github: 'everypolitician/everypoliticianbot'
 gem 'pry'
+gem 'puma'
 gem 'rake'
 gem 'sinatra', require: false
+gem 'webhook_handler', '~> 0.4.0'
 
 group :test do
   gem 'minitest'
